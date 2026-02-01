@@ -5,6 +5,10 @@ Live Demo: https://helpdesktickettracker.onrender.com/
 A helpdesk-style web application built with ASP.NET Core for tracking support tickets in a simple, structured workflow.
 
 ## Features
+
+![Home](docs/screenshots/home.png)
+![Create Ticket](docs/screenshots/manage-categories.png)
+![Ticket Details](docs/screenshots/manage-ticket.png)
 - Ticket creation and editing
 - Ticket status tracking (e.g., Open, In Progress, Resolved)
 - Basic admin-friendly structure (Controllers/Views/Pages)

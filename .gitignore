@@ -22,3 +22,4 @@ appsettings.*.json
 !appsettings.Development.json
 
 publish/
+out/

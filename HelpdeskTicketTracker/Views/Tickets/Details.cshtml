@@ -1,0 +1,77 @@
+﻿@model HelpdeskTicketTracker.Models.TicketDetailsVm
+
+<div class="card-soft">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+            <h2 class="page-title mb-1">Ticket #@Model.Ticket.TicketId</h2>
+            <div class="muted">@Model.Ticket.CategoryName • Created @Model.Ticket.CreatedAt</div>
+        </div>
+
+        <div class="actions-row">
+            <a class="btn btn-secondary" href="/Tickets">Back</a>
+
+            <form asp-controller="Tickets"
+                  asp-action="Delete"
+                  asp-route-id="@Model.Ticket.TicketId"
+                  method="post"
+                  asp-antiforgery="true"
+                  onsubmit="return confirm('Delete this ticket?');">
+                <button type="submit" class="btn btn-danger">Delete Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4 class="mb-2">@Model.Ticket.Title</h4>
+    <p>@Model.Ticket.Description</p>
+
+    @{
+        var badgeClass = Model.Ticket.Status == "Closed"
+        ? "badge-status badge-closed"
+        : (Model.Ticket.Status == "In Progress" ? "badge-status badge-progress" : "badge-status badge-open");
+    }
+    <div class="mb-3">
+        <span class="@badgeClass">@Model.Ticket.Status</span>
+    </div>
+
+    <hr />
+
+    <h5>Update Status</h5>
+    <form method="post" action="/Tickets/UpdateStatus/@Model.Ticket.TicketId" class="mb-3 actions-row">
+        <select name="status" class="form-select" style="max-width: 220px;">
+            <option value="Open" selected="@(Model.Ticket.Status == "Open")">Open</option>
+            <option value="In Progress" selected="@(Model.Ticket.Status == "In Progress")">In Progress</option>
+            <option value="Closed" selected="@(Model.Ticket.Status == "Closed")">Closed</option>
+        </select>
+        <button type="submit" class="btn btn-warning">Save Status</button>
+    </form>
+
+    <hr />
+
+    <h5>Add Comment</h5>
+    <form method="post" action="/Tickets/AddComment/@Model.Ticket.TicketId">
+        <div class="mb-2">
+            <textarea name="newCommentText" class="form-control" rows="3" placeholder="Write an update..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Comment</button>
+    </form>
+
+    <hr />
+
+    <h5>Comments</h5>
+    @if (Model.Comments.Count == 0)
+    {
+        <p class="muted mb-0">No comments yet.</p>
+    }
+    else
+    {
+        @foreach (var c in Model.Comments)
+        {
+            <div class="comment-item">
+                <div class="muted" style="font-size:.9rem;">@c.CreatedAt</div>
+                <div>@c.Text</div>
+            </div>
+        }
+    }
+</div>

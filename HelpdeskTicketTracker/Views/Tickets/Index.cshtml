@@ -1,0 +1,55 @@
+﻿@model List<HelpdeskTicketTracker.Models.Ticket>
+
+<div class="card-soft">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="page-title mb-0">Tickets</h2>
+            <div class="muted">Track issues, status, and comments.</div>
+        </div>
+        <a class="btn btn-success" href="/Tickets/Create">Create Ticket</a>
+    </div>
+
+    <hr />
+
+    @if (Model.Count == 0)
+    {
+        <p class="muted mb-0">No tickets yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th style="width:80px;">ID</th>
+                        <th>Title</th>
+                        <th style="width:140px;">Status</th>
+                        <th style="width:160px;">Category</th>
+                        <th style="width:190px;">Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model)
+                    {
+                        var badgeClass = t.Status == "Closed"
+                        ? "badge-status badge-closed"
+                        : (t.Status == "In Progress" ? "badge-status badge-progress" : "badge-status badge-open");
+
+                        <tr>
+                            <td>@t.TicketId</td>
+                            <td>
+                                <a href="/Tickets/Details/@t.TicketId">@t.Title</a>
+                                <div class="muted" style="font-size:.9rem;">
+                                    @((t.Description.Length > 80) ? t.Description.Substring(0, 80) + "..." : t.Description)
+                                </div>
+                            </td>
+                            <td><span class="@badgeClass">@t.Status</span></td>
+                            <td>@t.CategoryName</td>
+                            <td class="muted">@t.CreatedAt</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="card-soft" style="max-width: 460px; margin: 0 auto;">
+    <h2 class="page-title">Login</h2>
+    <p class="muted">Use the demo credentials to access the system.</p>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <div class="alert alert-info">
+        <strong>Demo login:</strong><br />
+        Username: <strong>admin</strong><br />
+        Password: <strong>admin123</strong>
+    </div>
+
+    <form method="post" action="/Account/Login">
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input name="username" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" />
+        </div>
+
+        <button class="btn btn-success w-100" type="submit">Login</button>
+    </form>
+</div>

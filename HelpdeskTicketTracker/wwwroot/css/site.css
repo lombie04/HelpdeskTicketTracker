@@ -1,0 +1,80 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+body {
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.page-title {
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.card-soft {
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 14px;
+    padding: 16px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+.muted {
+    color: rgba(0,0,0,.6);
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(0,0,0,.12);
+}
+
+.badge-open {
+    background: rgba(13,110,253,.10);
+}
+
+.badge-progress {
+    background: rgba(255,193,7,.15);
+}
+
+.badge-closed {
+    background: rgba(25,135,84,.12);
+}
+
+.table thead th {
+    background: rgba(0,0,0,.03);
+}
+
+.comment-item {
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(0,0,0,.02);
+}
+
+.actions-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}

@@ -1,0 +1,53 @@
+﻿@model System.Data.DataTable
+@using System.Data
+
+<div class="card-soft">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="page-title mb-0">Categories</h2>
+            <div class="muted">Manage ticket categories (safe delete enabled).</div>
+        </div>
+        <a class="btn btn-secondary" href="/Tickets">Back to Tickets</a>
+    </div>
+
+    <hr />
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <form method="post" action="/Categories/Add" class="mb-3">
+        <div class="input-group" style="max-width: 420px;">
+            <input name="name" class="form-control" placeholder="New category name" />
+            <button class="btn btn-primary" type="submit">Add</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th style="width:80px;">ID</th>
+                    <th>Name</th>
+                    <th style="width:120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row["CategoryId"]</td>
+                        <td>@row["Name"]</td>
+                        <td>
+                            <form method="post" action="/Categories/Delete/@row["CategoryId"]"
+                                  onsubmit="return confirm('Delete this category?');">
+                                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

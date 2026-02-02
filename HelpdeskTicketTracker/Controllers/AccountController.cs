@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.IO;
 
 namespace HelpdeskTicketTracker.Controllers
 {
@@ -16,20 +17,45 @@ namespace HelpdeskTicketTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            if (username == "admin" && password == "admin123")
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
+                ViewBag.Error = "Please enter username and password.";
+                return View();
+            }
+
+            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "helpdesk.db");
+            var dal = new HelpdeskTicketTracker.Data.DataAccessLayer(dbPath);
+
+            var dt = dal.ExecuteQuery(
+                "SELECT Username, Role FROM Users WHERE Username = @u AND PasswordHash = @p LIMIT 1;",
+                ("@u", username.Trim()),
+                ("@p", password)
+            );
+
+            if (dt.Rows.Count == 1)
+            {
+                var role = dt.Rows[0]["Role"]?.ToString() ?? "User";
+
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, "Admin")
+                    new Claim(ClaimTypes.Name, username.Trim()),
+                    new Claim(ClaimTypes.Role, role)
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal
+                );
 
-                return RedirectToAction("Index", "Tickets");
+                return role switch
+                {
+                    "Admin" => RedirectToAction("Index", "Admin"),
+                    "Agent" => RedirectToAction("Index", "Agent"),
+                    _ => RedirectToAction("Index", "User")
+                };
             }
 
             ViewBag.Error = "Invalid username or password.";

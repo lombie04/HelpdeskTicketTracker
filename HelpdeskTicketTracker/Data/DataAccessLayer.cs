@@ -49,6 +49,35 @@ namespace HelpdeskTicketTracker.Data
             dt.Load(reader);
             return dt;
         }
+        public DataTable ExecuteQuery(string sql, params (string name, object value)[] parameters)
+        {
+            using var con = CreateConnection();
+            con.Open();
+
+            using var cmd = con.CreateCommand();
+            cmd.CommandText = sql;
+
+            foreach (var (name, value) in parameters)
+                cmd.Parameters.AddWithValue(name, value ?? DBNull.Value);
+
+            using var reader = cmd.ExecuteReader();
+
+            var dt = new DataTable();
+            dt.Load(reader);
+            return dt;
+        }
+        public DataTable RawQuery(string sql)
+        {
+            using var con = CreateConnection();
+            con.Open();
+            using var cmd = con.CreateCommand();
+            cmd.CommandText = sql;
+            using var reader = cmd.ExecuteReader();
+            var dt = new DataTable();
+            dt.Load(reader);
+            return dt;
+        }
+
     }
 }
 

@@ -23,3 +23,12 @@ appsettings.*.json
 
 publish/
 out/
+
+# SQLite local database
+**/App_Data/*.db
+**/App_Data/helpdesk.db
+
+# build outputs
+**/bin/
+**/obj/
+

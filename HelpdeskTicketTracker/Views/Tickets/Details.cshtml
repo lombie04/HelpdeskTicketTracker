@@ -37,6 +37,8 @@
 
     <hr />
 
+    @if (User.IsInRole("Admin") || User.IsInRole("Agent"))
+{
     <h5>Update Status</h5>
     <form method="post" action="/Tickets/UpdateStatus/@Model.Ticket.TicketId" class="mb-3 actions-row">
         <select name="status" class="form-select" style="max-width: 220px;">
@@ -46,6 +48,7 @@
         </select>
         <button type="submit" class="btn btn-warning">Save Status</button>
     </form>
+}
 
     <hr />
 
@@ -62,16 +65,16 @@
     <h5>Comments</h5>
     @if (Model.Comments.Count == 0)
     {
-        <p class="muted mb-0">No comments yet.</p>
+    <p class="muted mb-0">No comments yet.</p>
     }
     else
     {
-        @foreach (var c in Model.Comments)
+    @foreach (var c in Model.Comments)
         {
-            <div class="comment-item">
-                <div class="muted" style="font-size:.9rem;">@c.CreatedAt</div>
-                <div>@c.Text</div>
-            </div>
+    <div class="comment-item">
+        <div class="muted" style="font-size:.9rem;">@c.CreatedAt</div>
+        <div>@c.Text</div>
+    </div>
         }
     }
 </div>

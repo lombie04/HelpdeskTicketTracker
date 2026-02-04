@@ -1,6 +1,58 @@
-@{
+﻿@{
     ViewData["Title"] = "Agent Dashboard";
 }
-<h2>Agent Dashboard</h2>
-<p>Welcome, @User.Identity?.Name</p>
-<p>Your role: Agent</p>
+
+<div class="card-soft">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+            <h1 class="page-title mb-1">Agent Dashboard</h1>
+            <div class="muted">Welcome, @User.Identity?.Name</div>
+            <div class="mt-2">
+                <span class="badge-status badge-progress">Role: Agent</span>
+            </div>
+        </div>
+
+        <div class="actions-row">
+            <a class="btn btn-secondary" href="/Tickets">Open Tickets</a>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="comment-item">
+                <div class="muted">Queue</div>
+                <div style="font-weight:800; font-size:1.05rem;">Review incoming issues</div>
+                <div class="muted mt-1">Open the ticket list and triage by status.</div>
+                <div class="mt-3">
+                    <a class="btn btn-secondary" href="/Tickets">Go to Tickets</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="comment-item">
+                <div class="muted">Workflow</div>
+                <div style="font-weight:800; font-size:1.05rem;">Update ticket status</div>
+                <div class="muted mt-1">You can move tickets: Open → In Progress → Closed.</div>
+                <div class="mt-3">
+                    <span class="badge-status badge-open">Open</span>
+                    <span class="badge-status badge-progress ms-2">In Progress</span>
+                    <span class="badge-status badge-closed ms-2">Closed</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="comment-item">
+                <div class="muted">Communication</div>
+                <div style="font-weight:800; font-size:1.05rem;">Leave clear comments</div>
+                <div class="muted mt-1">Add short updates so users understand progress.</div>
+                <div class="mt-3">
+                    <a class="btn btn-secondary" href="/Tickets">Open a ticket</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

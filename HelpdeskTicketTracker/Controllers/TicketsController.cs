@@ -3,7 +3,9 @@ using HelpdeskTicketTracker.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Data;
+using System.IO;
 
 namespace HelpdeskTicketTracker.Controllers
 {
@@ -16,19 +18,17 @@ namespace HelpdeskTicketTracker.Controllers
             return new DataAccessLayer(dbPath);
         }
 
-        // ADMIN + AGENT: can see all tickets (or filtered for agent)
+        // ADMIN + AGENT: can see all tickets
         [Authorize(Roles = "Admin,Agent")]
         public IActionResult Index()
         {
             var dal = GetDal();
 
-            // If you want Agent to see only Open/In Progress, uncomment the WHERE line
             DataTable dt = dal.SelectData(@"
 SELECT t.TicketId, t.Title, t.Description, t.Status, t.CreatedAt, t.CategoryId, t.CreatedBy,
        c.Name AS CategoryName
 FROM Tickets t
 JOIN Categories c ON c.CategoryId = t.CategoryId
--- WHERE t.Status <> 'Closed'
 ORDER BY t.TicketId DESC;
 ");
 
@@ -51,7 +51,6 @@ WHERE t.CreatedBy = @u
 ORDER BY t.TicketId DESC;
 ", ("@u", username));
 
-            // reuse the same Index view so you don't create a new cshtml
             return View("Index", MapTickets(dt));
         }
 
@@ -90,7 +89,6 @@ VALUES (@title, @desc, 'Open', @created, @catId, @createdBy);
                 ("@createdBy", username)
             );
 
-            // User should go to My tickets, Admin can go to Index
             if (User.IsInRole("User"))
                 return RedirectToAction("My");
 
@@ -116,7 +114,6 @@ WHERE t.TicketId = @id;
 
             var row = tdt.Rows[0];
 
-            // If logged in as User, block access to other people's tickets
             var createdBy = row["CreatedBy"]?.ToString() ?? "";
             var username = User?.Identity?.Name ?? "";
 
@@ -162,14 +159,13 @@ ORDER BY CommentId DESC;
             return View(vm);
         }
 
-        // Anyone logged in can comment, but still respect "User can comment only on their own ticket"
+        // Anyone logged in can comment, but user can only comment on own ticket
         [HttpPost]
         public IActionResult AddComment(int id, string newCommentText)
         {
             if (string.IsNullOrWhiteSpace(newCommentText))
                 return RedirectToAction("Details", new { id });
 
-            // Ensure user isn't commenting on someone else's ticket
             if (User.IsInRole("User"))
             {
                 var dalCheck = GetDal();
@@ -195,7 +191,7 @@ VALUES (@tid, @text, @created);
             return RedirectToAction("Details", new { id });
         }
 
-
+        // Only Admin/Agent can update status
         [Authorize(Roles = "Admin,Agent")]
         [HttpPost]
         public IActionResult UpdateStatus(int id, string status)
@@ -204,8 +200,7 @@ VALUES (@tid, @text, @created);
             if (!allowed.Contains(status))
                 return RedirectToAction("Details", new { id });
 
-            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "helpdesk.db");
-            var dal = new DataAccessLayer(dbPath);
+            var dal = GetDal();
 
             dal.ExecuteNonQuery(
                 "UPDATE Tickets SET Status = @status WHERE TicketId = @id;",
@@ -214,6 +209,19 @@ VALUES (@tid, @text, @created);
             );
 
             return RedirectToAction("Details", new { id });
+        }
+
+        // Only Admin can delete
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var dal = GetDal();
+
+            dal.ExecuteNonQuery("DELETE FROM Comments WHERE TicketId = @id;", ("@id", id));
+            dal.ExecuteNonQuery("DELETE FROM Tickets WHERE TicketId = @id;", ("@id", id));
+
+            return RedirectToAction("Index");
         }
 
         private void LoadCategories(DataAccessLayer dal)

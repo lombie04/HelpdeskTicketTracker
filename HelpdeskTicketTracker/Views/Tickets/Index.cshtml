@@ -1,17 +1,34 @@
 ﻿@model List<HelpdeskTicketTracker.Models.Ticket>
 
-<div class="card-soft">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-            <h2 class="page-title mb-0">Tickets</h2>
-            <div class="muted">Track issues, status, and comments.</div>
+    <div class="card-soft">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2 class="page-title mb-0">
+                    @if (User.IsInRole("Admin"))
+                {
+                    @:All Tickets
+                }
+                else if (User.IsInRole("Agent"))
+                {
+                    @:Open Tickets
+                }
+                else
+                {
+                    @:My Tickets
+                }
+                </h2>
+                <div class="muted">Track issues, status, and comments.</div>
+            </div>
+
+            @if (User.IsInRole("User") || User.IsInRole("Admin"))
+        {
+            <a class="btn btn-success" href="/Tickets/Create">Create Ticket</a>
+        }
         </div>
-        <a class="btn btn-success" href="/Tickets/Create">Create Ticket</a>
-    </div>
 
-    <hr />
+        <hr />
 
-    @if (Model.Count == 0)
+        @if (Model.Count == 0)
     {
         <p class="muted mb-0">No tickets yet.</p>
     }
@@ -32,24 +49,24 @@
                     @foreach (var t in Model)
                     {
                         var badgeClass = t.Status == "Closed"
-                        ? "badge-status badge-closed"
-                        : (t.Status == "In Progress" ? "badge-status badge-progress" : "badge-status badge-open");
+                            ? "badge-status badge-closed"
+                            : (t.Status == "In Progress" ? "badge-status badge-progress" : "badge-status badge-open");
 
-                        <tr>
-                            <td>@t.TicketId</td>
-                            <td>
-                                <a href="/Tickets/Details/@t.TicketId">@t.Title</a>
-                                <div class="muted" style="font-size:.9rem;">
-                                    @((t.Description.Length > 80) ? t.Description.Substring(0, 80) + "..." : t.Description)
-                                </div>
-                            </td>
-                            <td><span class="@badgeClass">@t.Status</span></td>
-                            <td>@t.CategoryName</td>
-                            <td class="muted">@t.CreatedAt</td>
-                        </tr>
+                    <tr>
+                        <td>@t.TicketId</td>
+                        <td>
+                            <a href="/Tickets/Details/@t.TicketId">@t.Title</a>
+                            <div class="muted" style="font-size:.9rem;">
+                                @((t.Description.Length > 80) ? t.Description.Substring(0, 80) + "..." : t.Description)
+                            </div>
+                        </td>
+                        <td><span class="@badgeClass">@t.Status</span></td>
+                        <td>@t.CategoryName</td>
+                        <td class="muted">@t.CreatedAt</td>
+                    </tr>
                     }
                 </tbody>
             </table>
         </div>
     }
-</div>
+    </div>
